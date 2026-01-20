@@ -2,19 +2,33 @@ plugins {
     id 'java'
 }
 
-group = 'org.example'
-version = '1.0-SNAPSHOT'
-
 repositories {
     mavenCentral()
 }
 
+def allureVersion = "2.27.0"
+def selenideVersion = "7.7.2"
+def restAssuredVersion = "5.5.0"
+def junitVersion = "5.10.3"
+def lombokVersion = "1.18.34"
+
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
+    testImplementation "com.codeborne:selenide:${selenideVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation "io.rest-assured:json-path:${restAssuredVersion}"
+    testImplementation "io.qameta.allure:allure-junit5:${allureVersion}"
+    testImplementation "io.qameta.allure:allure-selenide:${allureVersion}"
+    testImplementation "io.qameta.allure:allure-rest-assured:${allureVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "com.fasterxml.jackson.core:jackson-databind:2.17.2"
+}
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 test {
     useJUnitPlatform()
+    systemProperties(System.getProperties())
 }
