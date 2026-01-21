@@ -21,9 +21,15 @@ public class LoginExtension implements BeforeEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        boolean needLogin = context.getRequiredTestMethod().isAnnotationPresent(WithLogin.class);
-        if (!needLogin) return;
+        if (!isLoginRequired(context)) return;
+        loginAndPrepareSession();
+    }
 
+    private boolean isLoginRequired(ExtensionContext context) {
+        return context.getRequiredTestMethod().isAnnotationPresent(WithLogin.class);
+    }
+
+    private void loginAndPrepareSession() {
         String user = System.getenv("DEMOQA_USER");
         String pass = System.getenv("DEMOQA_PASS");
 
@@ -37,9 +43,9 @@ public class LoginExtension implements BeforeEachCallback {
         String userId = loginResponse.getUserId();
         String expires = loginResponse.getExpires();
 
-        if (token == null || token.isBlank()) throw new AssertionError("Token is empty after /Login");
-        if (userId == null || userId.isBlank()) throw new AssertionError("UserId is empty after /Login");
-        if (expires == null || expires.isBlank()) throw new AssertionError("Expires is empty after /Login");
+        assertNotBlank(token, "Token is empty after /Login");
+        assertNotBlank(userId, "UserId is empty after /Login");
+        assertNotBlank(expires, "Expires is empty after /Login");
 
         accountSteps.checkAuthorized(user, pass);
         accountSteps.checkUserByToken(userId, token);
@@ -59,14 +65,12 @@ public class LoginExtension implements BeforeEachCallback {
         System.out.println("After login, current url = " + url());
     }
 
-    private void setStorage(String storageName, String token, String userId, String userName, String expires) {
-        Selenide.executeJavaScript(storageName + ".setItem('token', arguments[0]);", token);
-        Selenide.executeJavaScript(storageName + ".setItem('userID', arguments[0]);", userId);
-        Selenide.executeJavaScript(storageName + ".setItem('userName', arguments[0]);", userName);
-        Selenide.executeJavaScript(storageName + ".setItem('expires', arguments[0]);", expires);
+    private void assertNotBlank(String value, String message) {
+        if (value == null || value.isBlank()) {
+            throw new AssertionError(message);
+        }
     }
 }
-
 
 
 
