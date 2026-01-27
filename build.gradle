@@ -23,6 +23,7 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "com.fasterxml.jackson.core:jackson-databind:2.17.2"
+    testImplementation "org.aspectj:aspectjweaver:1.9.22.1"
 }
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
@@ -31,4 +32,9 @@ tasks.withType(JavaCompile).configureEach {
 test {
     useJUnitPlatform()
     systemProperties(System.getProperties())
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('aspectjweaver') }.absolutePath}"
 }
