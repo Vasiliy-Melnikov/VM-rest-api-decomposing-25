@@ -22,13 +22,16 @@ public class AccountSteps {
                 return action.get();
             } catch (AssertionError e) {
                 if (i == attempts) throw e;
-                try { Thread.sleep(delayMs); } catch (InterruptedException ignored) {}
+                try {
+                    Thread.sleep(delayMs);
+                } catch (InterruptedException ignored) {
+                }
             }
         }
         throw new IllegalStateException("unreachable");
     }
 
-    @Step("API: generate token")
+    @Step("API: Generate token for user '{username}'")
     public TokenResponse generateToken(String username, String password) {
         return retryOnBadGateway(() -> {
             LoginRequest body = new LoginRequest();
@@ -47,13 +50,13 @@ public class AccountSteps {
         });
     }
 
-    @Step("API: login with fresh token (GenerateToken -> Login)")
+    @Step("API: Login with fresh token for user '{username}'")
     public LoginResponse loginWithFreshToken(String username, String password) {
         generateToken(username, password);
         return login(username, password);
     }
 
-    @Step("API: login (userName/password)")
+    @Step("API: Login for user '{username}'")
     public LoginResponse login(String username, String password) {
         return retryOnBadGateway(() -> {
             LoginRequest body = new LoginRequest();
@@ -72,7 +75,7 @@ public class AccountSteps {
         });
     }
 
-    @Step("API: check authorized (username/password)")
+    @Step("API: Check user '{username}' is authorized")
     public void checkAuthorized(String username, String password) {
         retryOnBadGateway(() -> {
             LoginRequest body = new LoginRequest();
@@ -93,7 +96,7 @@ public class AccountSteps {
         });
     }
 
-    @Step("API: check user доступен по token")
+    @Step("API: Check user is accessible by token (userId='{userId}')")
     public void checkUserByToken(String userId, String token) {
         retryOnBadGateway(() -> {
             given()
@@ -109,7 +112,6 @@ public class AccountSteps {
         });
     }
 }
-
 
 
 
