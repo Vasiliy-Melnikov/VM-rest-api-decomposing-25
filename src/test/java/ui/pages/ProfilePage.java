@@ -1,6 +1,7 @@
 package ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -12,6 +13,7 @@ public class ProfilePage {
     private final SelenideElement userNameValue = $("#userName-value");
     private final SelenideElement booksTable = $(".rt-table");
 
+    @Step("UI: Open profile page")
     public ProfilePage openPage() {
         open("/profile");
 
@@ -32,11 +34,13 @@ public class ProfilePage {
         return this;
     }
 
+    @Step("UI: Verify book '{bookName}' is present")
     public ProfilePage shouldSeeBook(String bookName) {
         booksTable.shouldHave(text(bookName));
         return this;
     }
 
+    @Step("UI: Delete book '{bookName}' from profile")
     public ProfilePage deleteBookFromList(String bookName) {
         SelenideElement row = $$(".rt-tbody .rt-tr-group")
                 .findBy(text(bookName))
@@ -49,12 +53,13 @@ public class ProfilePage {
         return this;
     }
 
-
+    @Step("UI: Verify book '{bookName}' is not present")
     public ProfilePage shouldNotSeeBook(String bookName) {
         booksTable.shouldNotHave(text(bookName));
         return this;
     }
 }
+
 
 
 

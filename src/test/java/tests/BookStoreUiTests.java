@@ -3,6 +3,7 @@ package tests;
 import annotations.WithLogin;
 import api.steps.BookStoreSteps;
 import extensions.LoginExtension;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.Test;
 import ui.pages.ProfilePage;
 
@@ -25,14 +26,19 @@ public class BookStoreUiTests extends TestBase {
         String isbn = "9781449325862";
         String bookName = "Git Pocket Guide";
 
-        bookStoreSteps.deleteAllBooks(userId, token);
-        bookStoreSteps.addBook(userId, token, isbn);
+        prepareUserBooks(userId, token, isbn);
 
         profilePage
                 .openPage()
                 .shouldSeeBook(bookName)
                 .deleteBookFromList(bookName)
                 .shouldNotSeeBook(bookName);
+    }
+
+    @Step("API: Prepare user books (clear collection and add isbn='{isbn}')")
+    private void prepareUserBooks(String userId, String token, String isbn) {
+        bookStoreSteps.deleteAllBooks(userId, token);
+        bookStoreSteps.addBook(userId, token, isbn);
     }
 }
 
